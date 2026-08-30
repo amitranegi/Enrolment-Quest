@@ -1,0 +1,10 @@
+{
+  "access": {
+    "visibility": "unlisted"
+  },
+  "badge": "right",
+  "db": {
+    "plays": { "read": "none", "write": "any" },
+    "leaderboard": { "read": "any", "write": "any" }
+  }
+}

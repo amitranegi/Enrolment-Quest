@@ -1,0 +1,371 @@
+{
+  "canvas": {
+    "w": 1920,
+    "h": 1080
+  },
+  "tile": 64,
+  "sprites": {
+    "player_idle": {
+      "w": 64,
+      "h": 64,
+      "frames": 5,
+      "label": "Hero \u2014 Idle",
+      "group": "Characters",
+      "strip": "320x64"
+    },
+    "player_run": {
+      "w": 64,
+      "h": 64,
+      "frames": 5,
+      "label": "Hero \u2014 Run",
+      "group": "Characters",
+      "strip": "320x64"
+    },
+    "player_jump": {
+      "w": 64,
+      "h": 64,
+      "frames": 1,
+      "label": "Hero \u2014 Jump",
+      "group": "Characters",
+      "strip": "64x64"
+    },
+    "focus_hero": {
+      "w": 96,
+      "h": 96,
+      "frames": 5,
+      "label": "Hero \u2014 Focus Zone (front)",
+      "group": "Characters",
+      "strip": "480x96",
+      "notes": "Front-facing Focus Zone portrait. Drop public/sprites/focus_hero.png to replace procedural art."
+    },
+    "hero_front": {
+      "w": 96,
+      "h": 96,
+      "frames": 8,
+      "label": "Hero \u2014 Front showcase",
+      "group": "Characters",
+      "strip": "768x96",
+      "notes": "Full-body user-facing idle for title + summary. Unique motions; play at uneven frequencies."
+    },
+    "family_front": {
+      "w": 64,
+      "h": 64,
+      "frames": 6,
+      "label": "Family \u2014 Front adult",
+      "group": "Characters",
+      "strip": "384x64",
+      "notes": "User-facing family adult for summary / party. Gender packs can override."
+    },
+    "family_front_child": {
+      "w": 64,
+      "h": 64,
+      "frames": 6,
+      "label": "Family \u2014 Front child",
+      "group": "Characters",
+      "strip": "384x64"
+    },
+    "enemy_sneezy": {
+      "w": 64,
+      "h": 64,
+      "frames": 5,
+      "label": "Enemy \u2014 Sneezy Sprinter",
+      "group": "Characters",
+      "strip": "320x64"
+    },
+    "enemy_bill": {
+      "w": 64,
+      "h": 96,
+      "frames": 5,
+      "label": "Enemy \u2014 Bill Blaster",
+      "group": "Characters",
+      "strip": "320x96"
+    },
+    "enemy_junk": {
+      "w": 64,
+      "h": 64,
+      "frames": 5,
+      "label": "Enemy \u2014 JunkZilla",
+      "group": "Characters",
+      "strip": "320x64"
+    },
+    "enemy_bone": {
+      "w": 64,
+      "h": 80,
+      "frames": 5,
+      "label": "Enemy \u2014 Bone Rattler",
+      "group": "Characters",
+      "strip": "320x80"
+    },
+    "enemy_bone_pile": {
+      "w": 64,
+      "h": 32,
+      "frames": 1,
+      "label": "Bone Rattler \u2014 collapsed pile",
+      "group": "Characters",
+      "strip": "64x32"
+    },
+    "pickup_kit": {
+      "w": 40,
+      "h": 40,
+      "frames": 1,
+      "label": "Power-up \u2014 Pill Blaster kit",
+      "group": "Items",
+      "strip": "40x40"
+    },
+    "fx_puff": {
+      "w": 32,
+      "h": 32,
+      "frames": 1,
+      "label": "Effect \u2014 cloud puff",
+      "group": "Effects",
+      "strip": "32x32"
+    },
+    "fx_bill": {
+      "w": 32,
+      "h": 20,
+      "frames": 1,
+      "label": "Effect \u2014 rolled paper bill",
+      "group": "Effects",
+      "strip": "32x20"
+    },
+    "fx_splash": {
+      "w": 32,
+      "h": 32,
+      "frames": 1,
+      "label": "Effect \u2014 grease splash",
+      "group": "Effects",
+      "strip": "32x32"
+    },
+    "fx_bone": {
+      "w": 24,
+      "h": 24,
+      "frames": 1,
+      "label": "Effect \u2014 bone shard",
+      "group": "Effects",
+      "strip": "24x24"
+    },
+    "fx_pill": {
+      "w": 28,
+      "h": 16,
+      "frames": 1,
+      "label": "Effect \u2014 thrown pill",
+      "group": "Effects",
+      "strip": "28x16"
+    },
+    "coin": {
+      "w": 32,
+      "h": 32,
+      "frames": 5,
+      "label": "Coin",
+      "group": "Items",
+      "strip": "160x32"
+    },
+    "flag": {
+      "w": 64,
+      "h": 128,
+      "frames": 1,
+      "label": "Level Flag",
+      "group": "Items",
+      "strip": "64x128"
+    },
+    "cloud": {
+      "w": 128,
+      "h": 64,
+      "frames": 1,
+      "label": "Cloud",
+      "group": "Sky",
+      "strip": "128x64"
+    },
+    "bird": {
+      "w": 48,
+      "h": 32,
+      "frames": 5,
+      "label": "Bird (animated sky)",
+      "group": "Sky",
+      "strip": "240x32"
+    },
+    "tile_top": {
+      "w": 64,
+      "h": 64,
+      "frames": 1,
+      "label": "Ground \u2014 grass top",
+      "group": "Terrain",
+      "strip": "64x64"
+    },
+    "tile_ground": {
+      "w": 64,
+      "h": 64,
+      "frames": 1,
+      "label": "Ground \u2014 dirt fill",
+      "group": "Terrain",
+      "strip": "64x64"
+    },
+    "tile_platform": {
+      "w": 64,
+      "h": 64,
+      "frames": 1,
+      "label": "Floating platform",
+      "group": "Terrain",
+      "strip": "64x64"
+    },
+    "tile_brick": {
+      "w": 64,
+      "h": 64,
+      "frames": 1,
+      "label": "Brick \u2014 destructible",
+      "group": "Terrain",
+      "strip": "64x64"
+    },
+    "tile_metal": {
+      "w": 64,
+      "h": 64,
+      "frames": 1,
+      "label": "Block \u2014 indestructible",
+      "group": "Terrain",
+      "strip": "64x64"
+    },
+    "bg_title": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Title screen (Bangalore green park + hero stage + tall wooden board)",
+      "group": "Backgrounds",
+      "strip": "1920x1080"
+    },
+    "bg_setup": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Hero setup (same scenic plate as title)",
+      "group": "Backgrounds",
+      "strip": "1920x1080"
+    },
+    "bg_l1": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Level 1",
+      "group": "Backgrounds",
+      "strip": "1920x1080"
+    },
+    "bg_l2": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Level 2",
+      "group": "Backgrounds",
+      "strip": "1920x1080"
+    },
+    "bg_l3": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Level 3",
+      "group": "Backgrounds",
+      "strip": "1920x1080"
+    },
+    "bg_l4": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Level 4",
+      "group": "Backgrounds",
+      "strip": "1920x1080"
+    },
+    "bg_complete": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Background \u2014 Quest complete",
+      "group": "Backgrounds",
+      "strip": "1920x1080",
+      "notes": "Static Home Secured scenic for summary UI \u2014 not used as in-level play BG."
+    },
+    "parallax_l1_far": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Parallax L1 \u2014 Far hills",
+      "group": "Parallax",
+      "strip": "1920x1080",
+      "notes": "Transparent sky; seamless horizontal tile. All three L1 parallax slots required to replace procedural hills."
+    },
+    "parallax_l1_mid": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Parallax L1 \u2014 Mid hills",
+      "group": "Parallax",
+      "strip": "1920x1080"
+    },
+    "parallax_l1_near": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Parallax L1 \u2014 Near scrub",
+      "group": "Parallax",
+      "strip": "1920x1080",
+      "notes": "Seamless pattern only \u2014 no unique landmarks"
+    },
+    "parallax_l2_far": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Parallax L2 \u2014 Far hills",
+      "group": "Parallax",
+      "strip": "1920x1080"
+    },
+    "parallax_l2_mid": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Parallax L2 \u2014 Mid hills",
+      "group": "Parallax",
+      "strip": "1920x1080"
+    },
+    "parallax_l2_near": {
+      "w": 1920,
+      "h": 1080,
+      "frames": 1,
+      "label": "Parallax L2 \u2014 Near scrub",
+      "group": "Parallax",
+      "strip": "1920x1080"
+    },
+    "landmark_l1_start": {
+      "w": 384,
+      "h": 448,
+      "frames": 1,
+      "label": "L1 Start \u2014 Neem path gate",
+      "group": "Landmarks",
+      "strip": "384x448",
+      "notes": "Storybook marigold toran gate; true alpha (no baked checkerboard)."
+    },
+    "landmark_l1_end": {
+      "w": 384,
+      "h": 448,
+      "frames": 1,
+      "label": "L1 End \u2014 Family Cottage",
+      "group": "Landmarks",
+      "strip": "384x448",
+      "notes": "Doorway faces LEFT (player approach). Solid opaque; magenta-keyed."
+    },
+    "landmark_l2_start": {
+      "w": 384,
+      "h": 448,
+      "frames": 1,
+      "label": "L2 Start \u2014 Highland clinic gate",
+      "group": "Landmarks",
+      "strip": "384x448",
+      "notes": "Storybook clinic arch; true alpha (no baked checkerboard)."
+    },
+    "landmark_l2_end": {
+      "w": 384,
+      "h": 448,
+      "frames": 1,
+      "label": "L2 End \u2014 Hill Clinic",
+      "group": "Landmarks",
+      "strip": "384x448",
+      "notes": "Doorway faces LEFT (player approach). Solid opaque; magenta-keyed."
+    }
+  }
+}

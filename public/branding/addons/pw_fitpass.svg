@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="FITPASS fitness illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1d7f6f"/>
+      <stop offset="1" stop-color="#0f4f46"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="180" rx="18" fill="url(#bg)"/>
+  <circle cx="72" cy="90" r="40" fill="#2cc0ad" opacity="0.45"/>
+  <rect x="126" y="68" width="70" height="14" rx="7" fill="#f6f1dd"/>
+  <rect x="196" y="68" width="70" height="14" rx="7" fill="#f6f1dd"/>
+  <circle cx="120" cy="75" r="14" fill="#f6f1dd"/>
+  <circle cx="272" cy="75" r="14" fill="#f6f1dd"/>
+  <rect x="132" y="108" width="126" height="10" rx="5" fill="#97e5d8" opacity="0.9"/>
+  <text x="30" y="150" fill="#e8fff8" font-family="Arial, sans-serif" font-size="22" font-weight="700">FITPASS</text>
+</svg>

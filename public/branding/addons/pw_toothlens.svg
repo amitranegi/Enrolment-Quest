@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="TOOTHLENS dental illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2187a0"/>
+      <stop offset="1" stop-color="#15586f"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="180" rx="18" fill="url(#bg)"/>
+  <ellipse cx="95" cy="92" rx="42" ry="48" fill="#dff7ff"/>
+  <ellipse cx="95" cy="108" rx="26" ry="24" fill="#bcefff"/>
+  <rect x="162" y="54" width="110" height="72" rx="12" fill="#e9fdff" opacity="0.92"/>
+  <circle cx="188" cy="80" r="10" fill="#68d1e8"/>
+  <rect x="206" y="74" width="52" height="12" rx="6" fill="#68d1e8"/>
+  <rect x="174" y="102" width="84" height="10" rx="5" fill="#9fe9f6"/>
+  <text x="30" y="150" fill="#eafcff" font-family="Arial, sans-serif" font-size="21" font-weight="700">TOOTHLENS</text>
+</svg>

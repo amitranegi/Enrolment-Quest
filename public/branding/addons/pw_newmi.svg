@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="NEWMI women and pregnancy care illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#b25ccf"/>
+      <stop offset="1" stop-color="#6e2f8e"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="180" rx="18" fill="url(#bg)"/>
+  <circle cx="90" cy="64" r="18" fill="#ffd8e8"/>
+  <path d="M58 130c0-24 14-42 32-42s32 18 32 42z" fill="#ffc4df"/>
+  <circle cx="106" cy="111" r="16" fill="#fff0f7" opacity="0.9"/>
+  <rect x="168" y="58" width="112" height="16" rx="8" fill="#f6dcff"/>
+  <rect x="168" y="84" width="94" height="12" rx="6" fill="#f6dcff"/>
+  <rect x="168" y="104" width="76" height="12" rx="6" fill="#f6dcff"/>
+  <text x="30" y="150" fill="#fff2ff" font-family="Arial, sans-serif" font-size="22" font-weight="700">NEWMI</text>
+</svg>

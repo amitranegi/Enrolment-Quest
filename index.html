@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Enrolment Quest — Tarento</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="stylesheet" href="./fonts/fonts.css" />
+</head>
+<body>
+<div id="stage"><div id="wrap">
+  <canvas id="game" width="1920" height="1080"></canvas>
+
+  <div id="hud">
+    <div class="grp">
+      <span class="chip" id="lvlName">LEVEL 1</span>
+      <span class="chip chip-hearts" id="hearts" aria-label="3 lives">
+        <i class="px-heart on" aria-hidden="true"></i>
+        <i class="px-heart on" aria-hidden="true"></i>
+        <i class="px-heart on" aria-hidden="true"></i>
+      </span>
+      <span class="chip chip-coins" id="coinHud"><span class="hudIco" aria-hidden="true">◉</span> <b>0</b></span>
+      <span class="chip" id="powHud" style="display:none;"><span class="hudIco" aria-hidden="true">⚡</span> Power</span>
+    </div>
+    <div class="grp">
+      <button type="button" class="chip chip-focus" id="fzFamily" hidden title="Edit family party">Family</button>
+      <button type="button" class="chip chip-focus" id="fzGmc" hidden title="Change medical cover">Medical</button>
+      <button type="button" class="chip chip-focus" id="fzAddon" hidden title="Change add-ons">Add-ons</button>
+      <button type="button" class="chip chip-focus" id="fzGtl" hidden title="Change term life">Term life</button>
+      <span class="chip chip-prem" id="premHud">Your picks</span>
+      <button id="tasksBtn">TASKS ▾</button>
+    </div>
+  </div>
+
+  <div id="touch">
+    <div class="tbtn" id="tL">◀</div><div class="tbtn" id="tR">▶</div>
+    <div class="tbtn" id="tT" style="display:none;">⚡</div>
+    <div class="tbtn" id="tE">E</div><div class="tbtn" id="tJ">▲</div>
+  </div>
+
+  <div id="toast"></div>
+  <div id="pauseUI" hidden>
+    <div class="pauseScrim" aria-hidden="true"></div>
+    <aside class="pauseCard" role="dialog" aria-labelledby="pauseTitle" aria-modal="true">
+      <div class="pauseKicker">Paused</div>
+      <h2 id="pauseTitle">Take a breath</h2>
+      <p class="pauseLead">The quest waits here until you are ready.</p>
+      <div class="pauseActions">
+        <button type="button" class="pxbtn good" id="pauseResumeBtn">Resume</button>
+        <button type="button" class="pxbtn" id="pauseTitleBtn">Exit to title</button>
+      </div>
+      <p class="pauseHint">Press Esc to resume</p>
+    </aside>
+  </div>
+  <div id="enemyIntro" hidden>
+    <div class="ei-scrim" aria-hidden="true"></div>
+    <aside class="ei-card" role="dialog" aria-labelledby="eiName" aria-describedby="eiFoe eiBenefit">
+      <div class="ei-head">
+        <canvas id="eiSprite" width="128" height="128" aria-hidden="true"></canvas>
+        <div class="ei-head-text">
+          <div class="ei-kicker">New foe</div>
+          <div class="ei-title" id="eiName"></div>
+        </div>
+      </div>
+      <div class="ei-watch">
+        <div class="ei-label">Watch out</div>
+        <p class="ei-foe" id="eiFoe"></p>
+      </div>
+      <div class="ei-benefit">
+        <div class="ei-label">Cover yourself</div>
+        <p id="eiBenefit"></p>
+        <span class="ei-chip" id="eiTag"></span>
+      </div>
+      <button type="button" class="pxbtn good" id="eiDismiss">Got it · Space / E</button>
+    </aside>
+  </div>
+  <div id="modalLayer"></div>
+
+  <!-- TITLE — scenic BG + heroes on canvas; chrome overlays clear of the stage -->
+  <div class="screen canvasbg" id="titleUI">
+    <div class="titleCornerCluster" id="titleCornerCluster" aria-label="Title controls">
+      <button type="button" class="titleCornerBtn titleSoundBtn is-muted" id="titleSoundBtn" title="Sound off" aria-label="Sound off" aria-pressed="true">
+        <svg class="titleSoundSvg" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+          <path class="titleSoundWave" d="M10 5.2c.9.7 1.5 1.7 1.5 2.8S10.9 10.1 10 10.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/>
+          <path d="M2.5 6h2.2L8 3.5v9L4.7 10H2.5V6z" fill="currentColor"/>
+          <path class="titleSoundSlash" d="M3 3.5 L13 12.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/>
+        </svg>
+      </button>
+      <button type="button" class="titleCornerBtn" id="titleAdminBtn" title="Admin controls" aria-label="Admin controls">Admin</button>
+    </div>
+    <div id="titleHome" class="titleLayout">
+      <div class="titleBrand">
+        <div class="titlePartners" aria-label="Tarento times Loophealth">
+          <img class="titlePartnerLogo titlePartnerTarento" src="./branding/tarento.png" alt="Tarento" />
+          <span class="titlePartnerX" aria-hidden="true">×</span>
+          <img class="titlePartnerLogo titlePartnerLoop" src="./branding/loophealth.png" alt="Loophealth" />
+        </div>
+        <div class="titleGame">Enrolment Quest</div>
+        <div class="titleCompany" id="titleCompany">Benefits Adventure</div>
+      </div>
+
+      <!-- Comic chatter — synced to each title hero’s gesture, sits above their head -->
+      <div class="titleChat" id="titleChat" aria-live="polite">
+        <div class="titleBubble" id="titleChatBubble" hidden>
+          <span class="titleBubbleWho" id="titleBubbleWho">Hey!</span>
+          <p id="titleBubbleText"></p>
+        </div>
+      </div>
+
+      <!-- Text-only scores locked to the blank wooden planks in bg_title -->
+      <div class="titleLbBoard" id="titleLeaderboard">
+        <div class="titleBoardHead"><span class="titleLbSpark">★</span> Hall of Fame</div>
+        <div class="titleBoardBody" id="titleLeaderboardBody">
+          <p class="muted">Loading scores…</p>
+        </div>
+      </div>
+
+      <div class="titleCtaWrap">
+        <div id="titleMenu" class="titleMainMenu"></div>
+      </div>
+
+      <div class="titleControlsWrap" id="titleControls">
+        <button type="button" class="titleControlsBtn" id="titleControlsToggle" aria-expanded="false" aria-controls="titleControlsPop" title="Controls">Controls</button>
+        <div class="titleControlsPop" id="titleControlsPop" hidden>
+          <div class="titleBoardHead">Controls</div>
+          <div class="titleControlsBody">
+            <div><kbd>←</kbd><kbd>→</kbd> / <kbd>A</kbd><kbd>D</kbd> Move</div>
+            <div><kbd>Space</kbd> / <kbd>W</kbd> Jump</div>
+            <div><kbd>E</kbd> Enrol / Interact</div>
+            <div><kbd>X</kbd> / <kbd>F</kbd> Power-up</div>
+            <div><kbd>Esc</kbd> Pause</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="titleAdmin" class="titleAdmin" hidden>
+      <div class="titleAdminCard" id="titleAdminHome">
+        <div class="titleBoardHead">Admin controls</div>
+        <div id="titleAdminMenu"></div>
+        <button type="button" class="pxbtn small" id="titleAdminBack">← Back to home</button>
+      </div>
+      <div class="titleAdminCard titleDemoCard" id="titleDemoPanel" hidden>
+        <div class="titleBoardHead">Demo mode</div>
+        <p class="demoLead">Jump any stage for testing. Demo runs are never saved to Supabase.</p>
+        <label class="checkline demoCheck" id="demoSkipValLine">
+          <input type="checkbox" id="demoSkipValidation" checked>
+          <span>Skip field validations</span>
+        </label>
+        <div class="demoJumpGrid" id="demoJumpGrid"></div>
+        <div class="demoPanelActions">
+          <button type="button" class="pxbtn small" id="titleDemoBack">← Back to admin</button>
+          <button type="button" class="pxbtn warn small" id="titleDemoExit">Exit demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating bar while Demo Mode is active -->
+  <div id="demoBar" hidden>
+    <span class="demoBarTag">DEMO</span>
+    <div class="demoBarJumps" id="demoBarJumps"></div>
+    <label class="demoBarCheck" title="Skip setup field validations">
+      <input type="checkbox" id="demoBarSkipVal" checked>
+      <span>Skip validation</span>
+    </label>
+    <button type="button" class="demoBarExit" id="demoBarExit">Exit</button>
+  </div>
+
+  <!-- SETUP HERO — identity + look in one place -->
+  <div class="screen" id="setupUI">
+    <div class="setupWrap">
+      <div class="setupForm">
+        <h1>Build your hero</h1>
+        <p class="setupLead">Who you are — then the adventure.</p>
+        <p class="setupRealAsk">Please use your real name and details — it helps us understand what benefits matter to you.</p>
+
+        <div class="row"><label id="label_s_name">Full name</label>
+          <input type="text" id="s_name" maxlength="80" placeholder="e.g. Priya Sharma" autocomplete="name"></div>
+        <div class="row"><label id="label_s_dept">Department</label>
+          <input type="text" id="s_dept" maxlength="80" placeholder="e.g. Engineering" autocomplete="organization-title"></div>
+        <div class="row"><label>Gender</label>
+          <div class="optgrid" id="s_gender"></div></div>
+        <div class="row"><label>Age</label>
+          <input type="number" id="s_age" min="18" max="70" placeholder="18–70"></div>
+        <div class="row"><label>Marital status</label>
+          <div class="optgrid" id="s_marital"></div>
+          <p class="setupQuiet">Used for spouse cover eligibility.</p></div>
+
+        <p class="no" id="s_err" style="display:none;"></p>
+        <div class="btnrow setupActions">
+          <button class="pxbtn" data-action="showTitle">← Title</button>
+          <button class="pxbtn primary" id="s_start">START ADVENTURE ▶</button>
+        </div>
+      </div>
+
+      <aside class="setupPreview">
+        <div class="heroStage">
+          <canvas id="bigHero" width="256" height="256"></canvas>
+        </div>
+        <div class="heroName" id="s_heroName">Your hero</div>
+        <div class="heroTags" id="s_heroTags">Pick a gender to preview</div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- SPRITE STUDIO -->
+  <div class="screen" id="studioUI"><div class="panelPage">
+    <h1>Sprite Studio</h1>
+    <p class="muted">Replace any art in the game. Animated sprites need <b class="gd">5 frames left→right in one PNG strip</b>
+    (e.g. a 64×64 sprite = one 320×64 file). Static images are a single PNG at the listed size.
+    Uploads of other sizes are auto-scaled to fit. Changes apply instantly and are remembered on this device.</p>
+    <div class="back" style="margin-top:16px;"><button class="pxbtn" data-action="showTitle">← Back to title</button></div>
+    <div id="spriteList"></div>
+  </div></div>
+
+  <!-- DATA VIEW -->
+  <div class="screen" id="dataUI"><div class="panelPage">
+    <h1>Game Data</h1>
+    <p class="muted">Local plays mirrored on this device. Full cloud dumps come from the Supabase <code>export-plays</code> Edge Function — the browser cannot read the <code>plays</code> table directly.</p>
+    <div class="back" style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="pxbtn" data-action="showTitle">← Back</button>
+      <button class="pxbtn" data-action="refreshData">↻ Local</button>
+      <button class="pxbtn" data-action="exportData" data-arg="json">Copy local JSON</button>
+      <button class="pxbtn" data-action="exportData" data-arg="csv">Copy local CSV</button>
+    </div>
+    <div class="back" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <input type="password" id="adminSecret" placeholder="Admin export password" autocomplete="off" />
+      <button class="pxbtn" id="cloudExportJson">Cloud JSON</button>
+      <button class="pxbtn" id="cloudExportCsv">Cloud CSV</button>
+    </div>
+    <p class="muted" id="cloudExportNote" style="margin-top:10px;"></p>
+    <div id="dataTableWrap"><p class="muted" style="margin-top:20px;">Loading…</p></div>
+    <textarea id="dataOut" readonly onclick="this.select()"></textarea>
+  </div></div>
+
+  <!-- PER-LEVEL RESULTS — sits over frozen end-of-level scene -->
+  <div id="levelResultsUI" hidden>
+    <div class="lrHeroStage">
+      <canvas id="lrHeroCv" width="256" height="256" aria-label="Hero celebrating"></canvas>
+      <div class="lrHeroCaption" id="lrHeroCaption">Nice clear!</div>
+    </div>
+    <aside class="lrCard" id="lrCard">
+      <p class="lrEyebrow" id="lrEyebrow">Level clear</p>
+      <h2 id="lrTitle">Course Clear!</h2>
+      <ul class="lrParts" id="lrParts"></ul>
+      <div class="lrFocus" id="lrFocus" hidden>
+        <div class="lrFocusLabel">Your choices</div>
+        <ul class="lrParts lrFocusParts" id="lrFocusParts"></ul>
+      </div>
+      <div class="lrTotal" id="lrTotal" hidden>
+        <span>Level score</span>
+        <strong id="lrTotalPts">0</strong>
+      </div>
+      <div class="lrRank" id="lrRank" hidden>
+        <span class="lrRankLabel">Rank</span>
+        <span class="lrRankGrade" id="lrRankGrade">C</span>
+      </div>
+    </aside>
+  </div>
+
+  <!-- CHECKOUT / SUMMARY — full-bleed courtyard + overlay review card -->
+  <div class="screen summaryScreen" id="summaryUI">
+    <div class="checkoutLayout">
+      <div class="checkoutCourt">
+        <canvas id="courtCv" width="960" height="540" aria-label="Family in the courtyard"></canvas>
+        <div class="courtCaption" id="courtCaption">Your party</div>
+      </div>
+      <aside class="checkoutCard" id="summaryBody"></aside>
+      <aside class="checkoutSuccess" id="checkoutSuccess" hidden>
+        <p class="checkoutSuccessEyebrow">Quest complete</p>
+        <h2>You did great!</h2>
+        <p class="checkoutSuccessLead">Your interest is saved — now take the real step.</p>
+        <p class="checkoutSuccessBody">Complete enrolment on the portal to confirm the best benefits for you and your family, with full support from Loophealth.</p>
+        <div class="checkoutQrWrap">
+          <img id="checkoutQr" src="./branding/qr_enrol_portal.png?v=portal" width="160" height="160" alt="QR code — opens benefits.loophealth.com">
+          <span class="checkoutQrHint">Scan to open the enrolment portal</span>
+          <a class="checkoutPortalLink" id="checkoutPortalLink" href="https://benefits.loophealth.com/" target="_blank" rel="noopener noreferrer">benefits.loophealth.com</a>
+        </div>
+        <div class="coActions">
+          <a class="pxbtn good" id="successPortalBtn" href="https://benefits.loophealth.com/" target="_blank" rel="noopener noreferrer">Open enrolment portal</a>
+          <button class="pxbtn primary" id="successRestartBtn">Start new game</button>
+          <button class="pxbtn" id="successTitleBtn">Back to title</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="loading">
+    <div class="t">ENROLMENT QUEST</div>
+    <div id="loadBarWrap"><div id="loadBar"></div></div>
+    <div class="s" id="loadMsg">WARMING UP THE PIXELS…</div>
+  </div>
+</div></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

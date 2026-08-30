@@ -1,0 +1,36 @@
+{
+  "name": "enrolment-quest",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "node scripts/gen_sprite_manifest.mjs",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "compress:sprites": "python3 scripts/compress_public_sprites.py",
+    "check:levels": "node scripts/check_level_layout.mjs",
+    "preview": "vite preview",
+    "gen:l1-art": "python3 scripts/gen_l1_art_sets.py",
+    "gen:chunky-world": "python3 scripts/gen_chunky_world_layers.py --install",
+    "fix:storybook-world": "python3 scripts/fix_restore_storybook_world.py --install",
+    "export:l1-playable": "python3 scripts/export_l12_final.py --level 1 --install",
+    "use:l1-day": "node scripts/use-l1-set.mjs day",
+    "use:l1-night": "node scripts/use-l1-set.mjs night",
+    "use:l2-day": "node scripts/use-l2-set.mjs",
+    "export:l2-playable": "python3 scripts/export_l12_final.py --level 2 --install",
+    "export:l12-final": "python3 scripts/export_l12_final.py --install",
+    "use:l3-day": "node scripts/use-l3-set.mjs",
+    "export:l3-playable": "python3 scripts/export_l3_modern.py --install",
+    "use:l1-a": "node scripts/use-l1-set.mjs day",
+    "use:l1-b": "node scripts/use-l1-set.mjs night"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.3"
+  }
+}
