@@ -1,9 +1,15 @@
 import { demoProfile } from './demo';
+import { livspaceProfile } from './livspace';
 import { partnerProfile } from './partner';
 import { tarentoProfile } from './tarento';
 import type { CompanyProfile } from './types';
 
-export const companyProfiles: CompanyProfile[] = [tarentoProfile, demoProfile, partnerProfile];
+export const companyProfiles: CompanyProfile[] = [
+  tarentoProfile,
+  demoProfile,
+  partnerProfile,
+  livspaceProfile,
+];
 
 const companyById = new Map(companyProfiles.map((profile) => [profile.id, profile] as const));
 let activeCompanyId = tarentoProfile.id;

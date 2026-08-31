@@ -1,0 +1,106 @@
+-- ============================================================================
+-- NEW-CLIENT SUPABASE MIGRATION TEMPLATE — this file is NOT a real migration.
+--
+-- It lives at `supabase/MIGRATION_TEMPLATE.sql.txt`, a sibling of
+-- `supabase/migrations/`, not inside it, and with a `.txt` extension. The
+-- Supabase CLI only discovers `<digits>_<name>.sql` files INSIDE
+-- `supabase/migrations/`, so this file can never be auto-applied.
+--
+-- To onboard a real client:
+--   1. Copy this file's contents into a new file at:
+--        supabase/migrations/<YYYYMMDDHHMMSS>_add_company___SLUG__.sql
+--      (pick a timestamp later than the most recent existing migration)
+--   2. Find-and-replace every `__SLUG__` below with the client's id (must
+--      match `CompanyProfile.id` / the branding folder name exactly).
+--   3. Apply it via `supabase db push` (CLI) or paste it into the Supabase
+--      dashboard's SQL editor.
+--   4. Add `"__SLUG__": "plays___SLUG__"` to the `companyTable` map in
+--      `supabase/functions/export-plays/index.ts` and redeploy that function.
+--
+-- This mirrors the pattern in
+-- supabase/migrations/20260819084306_multi_company_profiles.sql, collapsed to
+-- one company's worth of statements. Unlike that original migration, there is
+-- no backfill step here — the `insert into ... select ... from public.plays`
+-- step in that file was a one-time historical-data move for Tarento only and
+-- does not apply to a brand-new client.
+-- ============================================================================
+
+create table if not exists public.plays___SLUG__ (
+  like public.plays including all
+);
+
+alter table public.plays___SLUG__
+  add column if not exists company_id text not null default '__SLUG__';
+
+create index if not exists plays___SLUG___created_at_idx
+  on public.plays___SLUG__ (created_at desc);
+
+alter table public.plays___SLUG__ enable row level security;
+
+drop policy if exists "anon_insert_plays___SLUG__" on public.plays___SLUG__;
+
+create policy "anon_insert_plays___SLUG__"
+  on public.plays___SLUG__
+  for insert
+  to anon, authenticated
+  with check (
+    char_length(trim(full_name)) >= 2
+    and char_length(trim(department)) >= 1
+    and char_length(full_name) <= 120
+    and char_length(department) <= 120
+  );
+
+grant insert on table public.plays___SLUG__ to anon, authenticated;
+revoke select, update, delete on table public.plays___SLUG__ from anon, authenticated;
+
+-- No-op if this schema already exists from the original multi-company migration.
+create schema if not exists private;
+revoke all on schema private from public;
+
+drop function if exists public.hall_of_fame___SLUG__(int);
+drop function if exists private.hall_of_fame___SLUG__(int);
+
+create function private.hall_of_fame___SLUG__(limit_n int default 8)
+returns table (
+  display_name text,
+  department text,
+  score int,
+  grade text
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    left(trim(p.full_name), 16)::text as display_name,
+    left(trim(p.department), 18)::text as department,
+    p.score,
+    p.grade
+  from public.plays___SLUG__ p
+  where p.score is not null
+  order by p.score desc nulls last, p.created_at asc
+  limit greatest(1, least(coalesce(limit_n, 8), 20));
+$$;
+
+create function public.hall_of_fame___SLUG__(limit_n int default 8)
+returns table (
+  display_name text,
+  department text,
+  score int,
+  grade text
+)
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select * from private.hall_of_fame___SLUG__(limit_n);
+$$;
+
+revoke all on function private.hall_of_fame___SLUG__(int) from public;
+revoke all on function public.hall_of_fame___SLUG__(int) from public;
+
+grant usage on schema private to anon, authenticated;
+grant execute on function private.hall_of_fame___SLUG__(int) to anon, authenticated;
+grant execute on function public.hall_of_fame___SLUG__(int) to anon, authenticated;
