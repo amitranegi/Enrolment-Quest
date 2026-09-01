@@ -19,7 +19,7 @@ export const ENEMY_INTROS: Record<EnemyIntroKey, EnemyIntroDef> = {
     name: 'Sneezy Sprinter',
     foeLine: 'Sneezes, then dashes straight at you.',
     benefitWhy: 'Everyday coughs and colds mean clinic visits, tests and medicines.',
-    benefitTag: 'Pick OPD — Outpatient Care',
+    benefitTag: 'Add Wellness benefits like Annual Health Checkup',
   },
   bill: {
     key: 'bill',
@@ -47,7 +47,7 @@ export const ENEMY_INTROS: Record<EnemyIntroKey, EnemyIntroDef> = {
     name: 'Claim Denier',
     foeLine: 'Shielded in front — strike from behind.',
     benefitWhy: 'Thinner plans can leave you paying a share of the bill.',
-    benefitTag: 'Compare Gold & Diamond GMC',
+    benefitTag: 'Compare your GMC plan options',
   },
   spike: {
     key: 'spike',

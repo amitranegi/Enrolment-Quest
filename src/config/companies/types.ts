@@ -23,6 +23,11 @@ export type CompanyProfile = {
   gmcPlans: Array<Record<string, unknown>>;
   addons: Array<Record<string, unknown> & { elig: (member: any) => boolean }>;
   gtlPlans: Array<Record<string, unknown>>;
+  // Level 2 follow-up — optional paid Super Top-Up riders offered right after
+  // a player confirms a `gmcPlans` choice. Each entry's `forGmcPlanId` must
+  // match a `gmcPlans[].id` — only entries matching the just-picked GMC plan
+  // are shown. Empty for companies with no Super Top-Up product.
+  superTopUpPlans: Array<Record<string, unknown> & { forGmcPlanId: string }>;
   enableLevel4: boolean;
 };
 

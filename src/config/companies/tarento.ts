@@ -198,6 +198,10 @@ export const tarentoProfile: CompanyProfile = {
     { id:'gtl_50', name:'₹50 Lakh cover', si:5000000, prem:1800, desc:'Double the protection for your nominees.' },
   ],
 
+  // No Super Top-Up product for Tarento — this stays empty and inherited
+  // as-is by any profile that spreads `...tarentoProfile` without overriding it.
+  superTopUpPlans: [],
+
   /** Admin: when false, L4 is skipped and L1–L3 use the longer compact campaign. */
   enableLevel4: false,
 };

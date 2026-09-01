@@ -2,71 +2,63 @@ import { assetPath } from '../assetPath';
 import { tarentoProfile } from './tarento';
 import type { CompanyProfile } from './types';
 
-// Level 2 — Group Medical Cover. Source: "Livspace plan details.csv" (Livspace - Final Flex Plans).
-// The source data models 2 family structures ("Base" = 1+3, "Extended Family" = 1+5),
-// each with an optional Super Top-Up rider layered on top of the base sum insured.
-// Each plan card below uses multiple `sums` entries to represent: the free/base-only
-// option, then each Super Top-Up tier as a cumulative SI + cumulative premium upgrade.
-// EMI is left `null` throughout — the source data gives annual premiums only, no
-// confirmed installment count, so no EMI figure is invented here.
+// Level 2 — Group Medical Cover. Source: "Livspace GMC & Super Top Up.xlsx"
+// (sheet "GMC Plan"), cross-checked against Loop's live "healthflex" portal
+// screenshots for Livspace. Exactly 2 plans, each with ONE `sums` entry —
+// Super Top-Up is a distinct, separately-priced benefit (see the "Super Top
+// Up" sheet) and must NOT be nested into `sums` here: `openGmcFocusZone`
+// (src/game/legacy.ts) renders one card per (plan, sums-entry) pair sharing
+// the plan's `name`, so multiple sums per plan previously showed up as
+// several identically-named "Base"/"Extended Family" cards in Level 2.
 const livspaceGmcPlans: CompanyProfile['gmcPlans'] = [
   {
     id: 'gmc_base',
     name: 'Base',
-    desc: 'Solid essential health cover for you, your spouse and children — with the option to boost protection via a Super Top-Up.',
-    coverNote: 'Covers Self, Spouse, 2 Children (1+3).',
-    sums: [
-      { si: 300000, prem: 0, note: 'Base GMC — Company Sponsored', emi: null },
-      { si: 600000, prem: 4963, note: '+ Super Top-Up 3L (Deductible ₹3L)', emi: null },
-      { si: 800000, prem: 6318, note: '+ Super Top-Up 5L (Deductible ₹3L)', emi: null },
-      { si: 1050000, prem: 7576, note: '+ Super Top-Up 7.5L (Deductible ₹3L)', emi: null },
-    ],
+    desc: 'Fully paid by the company: cover for you, your spouse and up to two children.',
+    coverNote: 'Covers Self, Spouse & 2 Children.',
+    sums: [{ si: 300000, prem: 0, note: 'Company Sponsored', emi: null }],
     features: [
-      { label: 'Normal Room Rent', value: '2% of Sum Insured' },
-      { label: 'Co-payment on ESC', value: '5%' },
+      { label: 'Normal & ICU Room Rent', value: 'Normal — 2% of Sum Insured, ICU — 4% of Sum Insured' },
+      { label: 'Pre-Existing Diseases', value: 'Covered from Day 1' },
+      { label: 'Maternity cover', value: 'Normal — INR 50,000, C-section — INR 75,000' },
+      { label: 'AYUSH Treatment', value: 'Covered upto 25% of Sum Insured' },
       { label: 'Cataract (per eye)', value: 'INR 30,000' },
       { label: 'Hernia (per site)', value: 'INR 50,000' },
       { label: 'Knee / Joint replacement', value: 'Capped at INR 1,50,000 per knee' },
-      { label: 'Maternity cover', value: 'Normal — INR 50,000, C-section — INR 75,000' },
       { label: 'LASIK Surgery', value: 'Covered if correction index is above +/- 5' },
+      { label: 'Co-payment on ESC', value: '5%' },
     ],
     detail: {
       covered: [
         'Sum insured ₹3 Lakh (Self + Spouse + 2 Children)',
+        'Pre-existing diseases covered from Day 1',
         'Maternity: Normal INR 50,000 / C-section INR 75,000',
         'Cataract INR 30,000 per eye, Hernia INR 50,000 per site',
         'Knee/Joint replacement capped at INR 1,50,000 per knee',
         'LASIK when correction index is above +/- 5',
-        'Optional Super Top-Up: add ₹3L / ₹5L / ₹7.5L cover (deductible ₹3L) for ₹4,963 / ₹6,318 / ₹7,576',
       ],
-      notCovered: [
-        '5% co-pay on ESC (Employee-Spouse-Child) claims',
-        "Super Top-Up excludes maternity and the base plan's capped ailments; instead covers Nasal Sinus Surgery up to INR 35,000 and psychiatric hospitalisation up to INR 30,000",
-        'Super Top-Up LASIK threshold is +/- 7.5 (vs +/- 5 on the base plan)',
-      ],
-      notes: ['Company Sponsored — starts from ₹0 / family / year. Super Top-Up is optional and paid by the employee.'],
+      notCovered: ['5% co-pay on ESC (Employee-Spouse-Child) claims'],
+      notes: ['Company Sponsored — starts from ₹0 / family / year.'],
     },
   },
   {
     id: 'gmc_extended',
     name: 'Extended Family',
-    desc: 'Extend cover to your parents or parents-in-law, with the option to boost protection via a Super Top-Up.',
-    coverNote: 'Covers Self, Spouse, 2 Children, Parents or Parents-in-law (1+5).',
-    sums: [
-      { si: 300000, prem: 34098, note: 'Extended Family GMC (₹3L for Self/Spouse/Children, ₹2L sublimit for Parents)', emi: null },
-      { si: 600000, prem: 51352, note: '+ Super Top-Up 3L (Deductible ₹2L)', emi: null },
-      { si: 800000, prem: 56674, note: '+ Super Top-Up 5L (Deductible ₹2L)', emi: null },
-    ],
+    desc: 'Our most complete plan: the same cover you have in Base, now extended to one set of parents or in-laws so the whole family is looked after under one policy.',
+    coverNote: 'Covers Self, Spouse, 2 Children, Parents or Parents-in-law.',
+    sums: [{ si: 300000, prem: 34098, note: '4 EMIs at ₹8,524.5 / month, from your salary', emi: 8524.5 }],
     features: [
-      { label: 'Normal Room Rent', value: '2% of Sum Insured' },
-      { label: 'Co-payment on ESC', value: '5%' },
-      { label: 'Co-payment Parental', value: '10%' },
-      { label: 'Parental Sum Insured', value: 'INR 2,00,000 (sublimit within the ₹3L cover)' },
+      { label: 'Parental Sum Insured Capping', value: 'INR 2,00,000 (sublimit within the ₹3L cover)' },
+      { label: 'Normal & ICU Room Rent', value: 'Normal — 2% of Sum Insured, ICU — 4% of Sum Insured' },
+      { label: 'Maternity cover', value: 'Normal — INR 50,000, C-section — INR 75,000' },
       { label: 'Cataract (per eye)', value: 'INR 30,000' },
       { label: 'Hernia (per site)', value: 'INR 50,000' },
       { label: 'Knee / Joint replacement', value: 'Capped at INR 1,50,000 per knee' },
-      { label: 'Maternity cover', value: 'Normal — INR 50,000, C-section — INR 75,000' },
+      { label: 'AYUSH Treatment', value: 'Covered upto 25% of Sum Insured' },
+      { label: 'Modern Treatment', value: 'Covered upto 50% of Sum Insured' },
       { label: 'LASIK Surgery', value: 'Covered if correction index is above +/- 5' },
+      { label: 'Co-payment on ESC', value: '5%' },
+      { label: 'Co-payment Parental', value: '10%' },
     ],
     detail: {
       covered: [
@@ -75,15 +67,43 @@ const livspaceGmcPlans: CompanyProfile['gmcPlans'] = [
         'Cataract INR 30,000 per eye, Hernia INR 50,000 per site',
         'Knee/Joint replacement capped at INR 1,50,000 per knee',
         'LASIK when correction index is above +/- 5',
-        'Optional Super Top-Up: add ₹3L / ₹5L cover (deductible ₹2L) for ₹17,254 / ₹22,576, with parental top-up sublimits of ₹3L / ₹5L',
+        'Modern Treatment covered upto 50% of Sum Insured',
       ],
-      notCovered: [
-        '5% co-pay on ESC claims, 10% co-pay on parental claims',
-        "Super Top-Up excludes maternity and the base plan's capped ailments; instead covers Nasal Sinus Surgery up to INR 35,000 and psychiatric hospitalisation up to INR 30,000",
-        'Super Top-Up LASIK threshold is +/- 7.5 (vs +/- 5 on the base plan)',
-      ],
-      notes: ['Starts from ₹34,098 / family / year. Super Top-Up is optional and paid by the employee.'],
+      notCovered: ['5% co-pay on ESC claims, 10% co-pay on parental claims'],
+      notes: ['Starts from ₹34,098 / family / year · 4 EMIs at ₹8,524.5 / month, from your salary.'],
     },
+  },
+];
+
+// Super Top-Up — optional, employee-paid riders offered right after a GMC
+// plan is confirmed. Source: "Livspace GMC & Super Top Up.xlsx", sheet
+// "Super Top Up". `forGmcPlanId` ties each option to the matching gmcPlans
+// id above so only the relevant 3 (Base) or 2 (Extended Family) options show.
+const livspaceSuperTopUpPlans: CompanyProfile['superTopUpPlans'] = [
+  {
+    id: 'stu_base_3l', forGmcPlanId: 'gmc_base', name: 'Super Top-Up 3L',
+    si: 300000, prem: 4963, emi: null,
+    desc: 'Adds ₹3L cover once your Base plan is exhausted (deductible ₹3L). Excludes maternity and the base plan\'s capped ailments; LASIK threshold is +/- 7.5.',
+  },
+  {
+    id: 'stu_base_5l', forGmcPlanId: 'gmc_base', name: 'Super Top-Up 5L',
+    si: 500000, prem: 6318, emi: null,
+    desc: 'Adds ₹5L cover once your Base plan is exhausted (deductible ₹3L). Excludes maternity and the base plan\'s capped ailments; LASIK threshold is +/- 7.5.',
+  },
+  {
+    id: 'stu_base_7_5l', forGmcPlanId: 'gmc_base', name: 'Super Top-Up 7.5L',
+    si: 750000, prem: 7576, emi: null,
+    desc: 'Adds ₹7.5L cover once your Base plan is exhausted (deductible ₹3L). Excludes maternity and the base plan\'s capped ailments; LASIK threshold is +/- 7.5.',
+  },
+  {
+    id: 'stu_ext_3l', forGmcPlanId: 'gmc_extended', name: 'Super Top-Up 3L',
+    si: 300000, prem: 17254, emi: null,
+    desc: 'Adds ₹3L cover (with a ₹3L parental top-up sublimit) once your Extended Family plan is exhausted (deductible ₹2L). Excludes maternity and the base plan\'s capped ailments; LASIK threshold is +/- 7.5.',
+  },
+  {
+    id: 'stu_ext_5l', forGmcPlanId: 'gmc_extended', name: 'Super Top-Up 5L',
+    si: 500000, prem: 22576, emi: null,
+    desc: 'Adds ₹5L cover (with a ₹5L parental top-up sublimit) once your Extended Family plan is exhausted (deductible ₹2L). Excludes maternity and the base plan\'s capped ailments; LASIK threshold is +/- 7.5.',
   },
 ];
 
@@ -161,6 +181,7 @@ export const livspaceProfile: CompanyProfile = {
   // Max across both family structures: Extended Family adds parents on top of Base.
   dependantStructure: { spouse: 1, child: 2, parent: 2 },
   gmcPlans: livspaceGmcPlans,
+  superTopUpPlans: livspaceSuperTopUpPlans,
   addons: livspaceAddons,
   // No GTL policy for Livspace — Level 4 stays off.
   gtlPlans: [],

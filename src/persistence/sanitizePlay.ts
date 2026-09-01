@@ -72,6 +72,12 @@ function sanitizeGtl(raw: unknown): Record<string, unknown> | null {
   return g;
 }
 
+function sanitizeSuperTopUp(raw: unknown): Record<string, unknown> | null {
+  const s = asRecord(raw);
+  if (!s) return null;
+  return s;
+}
+
 export type SanitizedPlayPayload = {
   id: string;
   ts?: string;
@@ -84,6 +90,7 @@ export type SanitizedPlayPayload = {
   gmc: Record<string, unknown> | null;
   addons: unknown[];
   gtl: Record<string, unknown> | null;
+  superTopUp: Record<string, unknown> | null;
   nominees: unknown[];
   nomineeCount: number;
   totalPremium?: number;
@@ -115,6 +122,7 @@ export function sanitizePlayPayload(
     gmc: sanitizeGmc(payload.gmc),
     addons: sanitizeAddons(payload.addons),
     gtl: sanitizeGtl(payload.gtl),
+    superTopUp: sanitizeSuperTopUp(payload.superTopUp),
     nominees,
     nomineeCount: nominees.length,
     totalPremium:

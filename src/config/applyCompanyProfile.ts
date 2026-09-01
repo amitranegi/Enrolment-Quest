@@ -16,5 +16,6 @@ export function applyCompanyProfile(target: RuntimeCompanyConfig, profile: Compa
   target.gmcPlans = profile.gmcPlans;
   target.addons = profile.addons;
   target.gtlPlans = profile.gtlPlans;
+  target.superTopUpPlans = profile.superTopUpPlans;
   target.enableLevel4 = profile.enableLevel4;
 }

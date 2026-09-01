@@ -150,6 +150,7 @@ const CONFIG = {
   gmcPlans: [],
   addons: [],
   gtlPlans: [],
+  superTopUpPlans: [],
   enableLevel4: false,
 };
 
@@ -1199,6 +1200,7 @@ const Enrol = {
   gmc: null,                // {planId, planName, si, prem}
   addons: [],               // {id, name, per, memberIds:[], cost}
   gtl: null,                // {planId, name, si, prem}
+  superTopUp: null,         // {planId, name, si, prem}
   nominees: [],             // {id?, name, relation, share}
   startedAt: Date.now(),
 };
@@ -1213,6 +1215,7 @@ function totalPremium(){
   if(Enrol.gmc) t+=Enrol.gmc.prem;
   for(const a of Enrol.addons) t+=a.cost;
   if(Enrol.gtl) t+=Enrol.gtl.prem;
+  if(Enrol.superTopUp) t+=Enrol.superTopUp.prem;
   return t;
 }
 
@@ -1952,6 +1955,9 @@ function updateEnemyIntro(){
 function enemyIntroReady(e){
   if(e.dead) return false;
   if(!getEnemyIntro(e.t)) return false;
+  // Premium Spike's intro is about Term Life — skip it entirely for companies
+  // that don't ship Level 4 / GTL at all (every company today).
+  if(e.t==='spike' && !CONFIG.enableLevel4) return false;
   if(enemyIntroSeen.has(e.t)) return false;
   if(e.t==='bone' && e.state==='pile') return false;
   if(e.y > GROUND_Y + 40) return false; // fallen into a pit
@@ -3345,7 +3351,8 @@ function updateFocusChips(){
   set('fzFamily', !!G.done.family);
   set('fzGmc', !!G.done.gmc);
   set('fzAddon', !!G.done.addon);
-  set('fzGtl', !!G.done.gtl);
+  set('fzGtl', !!G.done.gtl && !!CONFIG.enableLevel4 && CONFIG.gtlPlans.length>0);
+  set('fzSuperTopUp', !!G.done.superTopUp && (CONFIG.superTopUpPlans||[]).length>0);
 }
 function openFocusFromHud(kind){
   if(!canOpenFocusFromHud()) return;
@@ -3353,6 +3360,7 @@ function openFocusFromHud(kind){
   else if(kind==='gmc') openGmcFocusZone(null, {revisit:true});
   else if(kind==='addon') openAddonBazaarFocusZone({revisit:true});
   else if(kind==='gtl') openGTL({revisit:true});
+  else if(kind==='superTopUp') openSuperTopUp({revisit:true});
 }
 
 function updateHUD(){
@@ -3375,6 +3383,7 @@ function updateHUD(){
     if(Enrol.gmc) picks.push(Enrol.gmc.planName||'Medical');
     if(Enrol.addons.length) picks.push(Enrol.addons.length+' add-on'+(Enrol.addons.length>1?'s':''));
     if(Enrol.gtl) picks.push('Term life');
+    if(Enrol.superTopUp) picks.push('Super Top-Up');
     if(Enrol.nominees.length) picks.push(Enrol.nominees.length+' nominee'+(Enrol.nominees.length>1?'s':''));
     premEl.textContent = picks.length ? picks.join(' · ') : 'Your picks';
   }
@@ -3394,6 +3403,7 @@ document.getElementById('fzFamily')?.addEventListener('click', ()=>openFocusFrom
 document.getElementById('fzGmc')?.addEventListener('click', ()=>openFocusFromHud('gmc'));
 document.getElementById('fzAddon')?.addEventListener('click', ()=>openFocusFromHud('addon'));
 document.getElementById('fzGtl')?.addEventListener('click', ()=>openFocusFromHud('gtl'));
+document.getElementById('fzSuperTopUp')?.addEventListener('click', ()=>openFocusFromHud('superTopUp'));
 document.getElementById('tasksBtn').onclick=()=>{
   if(G.enemyIntro) return;
   if(G.state!=='play'||G.paused) return;
@@ -4026,7 +4036,10 @@ function openGmcFocusZone(filterSi, opts={}){
       for(const pr of (G.portals||[])) pr.entered=false;
       toast(revisit ? 'Medical cover updated!' : 'Medical shield equipped!');
       // First clear only when confirming from this level's clinic portal.
-      if(!revisit && (LEVELS[G.levelIdx]||{}).portals?.some(p=>p.kind==='gmc')) completeLevel();
+      const shouldCompleteLevel = !revisit && (LEVELS[G.levelIdx]||{}).portals?.some(p=>p.kind==='gmc');
+      // Offer a matching Super Top-Up (if this company has any) before the
+      // level clears, so it reads as the natural next step after GMC.
+      openSuperTopUp({revisit, onDone: ()=>{ if(shouldCompleteLevel) completeLevel(); }});
     },
   });
 }
@@ -4034,6 +4047,59 @@ function openGmcFocusZone(filterSi, opts={}){
 function openGMC(si){ openGmcFocusZone(si); }
 function openGMCAll(){ openGmcFocusZone(null); }
 function openGMCDesk(filterSi){ openGmcFocusZone(filterSi); }
+
+/** Optional paid Super Top-Up riders shown right after a GMC plan is picked,
+ *  filtered to whichever plan the player just chose (`Enrol.gmc.planId`).
+ *  Skippable — closing via Back proceeds without picking one. `onDone` always
+ *  fires exactly once, whether the player picks a tier, revisits and keeps
+ *  their existing choice, or skips entirely (including when this company has
+ *  no matching Super Top-Up data at all — a silent no-op for those). */
+function openSuperTopUp(opts={}){
+  const revisit = !!opts.revisit;
+  const onDone = opts.onDone || (()=>{});
+  const gmcPlanId = Enrol.gmc ? Enrol.gmc.planId : null;
+  const options = (CONFIG.superTopUpPlans||[]).filter(p=>p.forGmcPlanId===gmcPlanId);
+  if(!options.length){ onDone(); return; }
+  playSfx('desk');
+  G.paused = true; window.G = G;
+  const cur = Enrol.superTopUp;
+  const plans = options.map(p=>({
+    id:p.id,
+    name:p.name,
+    tagline:p.desc,
+    sumLabel: fmtINR(p.si)+' additional cover',
+    priceLabel: fmtINR(p.prem)+' / family / year',
+    priceSub: p.emi ? ('or EMIs · '+fmtINR(p.emi)+'/mo') : undefined,
+    tone:'gold',
+    bullets:[p.desc].filter(Boolean),
+  }));
+  const initial = cur ? (options.find(x=>x.id===cur.planId)||{}).id || null : null;
+  openPlanChooser({
+    title:'Super Top-Up',
+    subtitle:'Optional extra cover for when your base plan runs out — tap Back if you\'d rather skip it.',
+    plans,
+    initialPlanId: initial,
+    nudgeTitle: 'Pick a top-up, or go Back to skip',
+    emptyNudge: 'Super Top-Up is optional and employee-paid — tap Back to continue without it.',
+    confirmLabel: revisit ? 'Save Super Top-Up' : 'Add Super Top-Up ▶',
+    paintBackground: paintLevelBackground,
+    onClose: ()=>{
+      closePlanChooser();
+      G.paused=false;
+      updateFocusChips();
+      onDone();
+    },
+    onConfirm: (planId)=>{
+      const p = options.find(x=>x.id===planId); if(!p) return;
+      Enrol.superTopUp = { planId:p.id, name:p.name, si:p.si, prem:p.prem };
+      G.done.superTopUp=true; updateHUD();
+      G.paused=false;
+      playSfx('confirm');
+      toast(revisit ? 'Super Top-Up updated!' : 'Super Top-Up added!');
+      onDone();
+    },
+  });
+}
 
 /* ---------- LEVEL 3: Wellbeing Bazaar add-ons ---------- */
 function addonTone(id){
@@ -4138,6 +4204,7 @@ function openGTL(opts={}){
   const revisit = !!opts.revisit;
   playSfx('desk');
   G.paused=true; window.G=G;
+  if(!CONFIG.gtlPlans.length){ G.paused=false; toast('No term life plans configured for this company.'); return; }
   const cur=Enrol.gtl;
   const highestSi=Math.max(...CONFIG.gtlPlans.map((p)=>Number(p.si)||0));
   const cheapestPaid=[...CONFIG.gtlPlans]
@@ -4871,7 +4938,7 @@ function startGame(){
     resetEnemyIntroSession();
     try{ startMusic(); }catch(e){}
     Object.assign(Enrol,{character:{name:'',gender:'',age:null,marital:'',skin:2},
-      dependants:[],covered:[],gmc:null,addons:[],gtl:null,nominees:[],startedAt:Date.now()});
+      dependants:[],covered:[],gmc:null,addons:[],gtl:null,superTopUp:null,nominees:[],startedAt:Date.now()});
     depSeq=1; G.coinsGot=0; G.stomps=0; G.deaths=0; G.timeSpent=0;
     G.done={}; G.deathSpot=null; G.introFocus=null; G.introGapUntil=0;
     Sprites.rebuildHero();
@@ -5398,7 +5465,7 @@ async function submitPlay(opts={}){
     character:Enrol.character, dependants:Enrol.dependants, covered:Enrol.covered,
     coveredNames:coveredMembers().map(m=>m.name),
     gmc:Enrol.gmc, addons:Enrol.addons.map(a=>({id:a.id,name:a.name,per:a.per,members:a.memberNames,cost:a.cost})),
-    gtl:Enrol.gtl, nominees:Enrol.nominees,
+    gtl:Enrol.gtl, superTopUp:Enrol.superTopUp, nominees:Enrol.nominees,
     totalPremium:totalPremium(), score:sc.total, grade:sc.grade,
     coins:G.coinsGot, stomps:G.stomps, deaths:G.deaths,
     durationSec:Math.round(G.timeSpent),
