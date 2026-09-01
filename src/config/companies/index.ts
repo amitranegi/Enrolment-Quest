@@ -1,4 +1,5 @@
 import { demoProfile } from './demo';
+import { expleoProfile } from './expleo';
 import { livspaceProfile } from './livspace';
 import { partnerProfile } from './partner';
 import { tarentoProfile } from './tarento';
@@ -9,6 +10,7 @@ export const companyProfiles: CompanyProfile[] = [
   demoProfile,
   partnerProfile,
   livspaceProfile,
+  expleoProfile,
 ];
 
 const companyById = new Map(companyProfiles.map((profile) => [profile.id, profile] as const));
