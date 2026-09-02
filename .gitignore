@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Supabase CLI local cache (project ref, pooler URL, version info) — regenerates via `supabase link`
+supabase/.temp/
+
 # Art workshop — never deploy / never commit (hundreds of MB)
 assets/sprites/_wip/
 assets/sprites/export/
