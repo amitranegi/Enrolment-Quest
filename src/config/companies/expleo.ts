@@ -2,15 +2,17 @@ import { assetPath } from '../assetPath';
 import { tarentoProfile } from './tarento';
 import type { CompanyProfile } from './types';
 
-// Level 2 — Group Medical Cover. Source: "Expleo GMC & OPD Plan.xlsx", sheets
-// "Base TnC" (company-sponsored base policy) and "GMC Flex" (8 optional paid
-// upgrade tiers, each adding to the base sum insured).
+// Level 2 — Group Medical Cover. Source: "Expleo GMC & OPD.xlsx" (updated),
+// sheets "Base TnC" (company-sponsored base policy) and "GMC Flex" (8
+// optional paid upgrade tiers, each adding to the base sum insured).
 //
 // The base plan's sum insured varies by employee grade band (₹3L–₹10L) — the
 // source data ties it to designation codes (DC/T1/P1.../E3) that this game has
-// no concept of, so the banding is surfaced as descriptive text rather than
-// picking one number. All Flex tier `sums.si` figures below assume the
-// minimum band (₹3L) plus that tier's enhancement, noted on each card.
+// no concept of. The updated sheet names each Flex tier against the ₹5L band
+// (e.g. "Base 5L + Bronze 3L"), so all `sums.si` figures below use ₹5L as the
+// reference base plus that tier's enhancement, matching the sheet's own
+// naming. Premiums are the sheet's single "Premium" row, which is GST-inclusive
+// (the earlier "Emp Face Rate Excl GST" figures × 1.18) — do not re-add GST.
 const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
   {
     id: 'gmc_base',
@@ -51,10 +53,10 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
   },
   {
     id: 'gmc_bronze_a',
-    name: 'Bronze A',
+    name: 'Base 5L + Bronze 3L',
     desc: 'Maternity-focused upgrade — boosts your Base cover by ₹3L with enhanced maternity and infertility limits.',
     coverNote: 'Enhanced Sum Insured covers Self, Spouse & Children only — parents are not included in this upgrade.',
-    sums: [{ si: 600000, prem: 14500, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹3L', emi: null }],
+    sums: [{ si: 800000, prem: 17110, note: 'Paid upgrade, GST inclusive — Base 5L + ₹3L', emi: null }],
     features: [
       { label: 'Maternity — Normal Delivery', value: 'INR 75,000' },
       { label: 'Maternity — C-Section', value: 'INR 1,00,000' },
@@ -65,17 +67,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Same as Base Plan — parents not covered under this upgrade' },
     ],
     detail: {
-      covered: ['Total SI ₹6L (on minimum grade band)', 'Enhanced maternity, infertility and pre/post-natal limits'],
+      covered: ['Total SI ₹8L (Base 5L + ₹3L)', 'Enhanced maternity, infertility and pre/post-natal limits'],
       notCovered: ['Parents are not covered under the enhanced sum insured'],
-      notes: ['Emp Face Rate ₹14,500 / family / year, excl. GST.'],
+      notes: ['₹17,110 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_bronze_b',
-    name: 'Bronze B',
+    name: 'Base 5L + Bronze 5L',
     desc: 'Maternity-focused upgrade — boosts your Base cover by ₹5L with the highest maternity and infertility limits in the Bronze/Silver line.',
     coverNote: 'Enhanced Sum Insured covers Self, Spouse & Children only — parents are not included in this upgrade.',
-    sums: [{ si: 800000, prem: 16500, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹5L', emi: null }],
+    sums: [{ si: 1000000, prem: 19470, note: 'Paid upgrade, GST inclusive — Base 5L + ₹5L', emi: null }],
     features: [
       { label: 'Maternity — Normal Delivery', value: 'INR 1,00,000' },
       { label: 'Maternity — C-Section', value: 'INR 1,25,000' },
@@ -86,17 +88,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Same as Base Plan — parents not covered under this upgrade' },
     ],
     detail: {
-      covered: ['Total SI ₹8L (on minimum grade band)', 'Highest maternity/infertility limits before Diamond/Platinum'],
+      covered: ['Total SI ₹10L (Base 5L + ₹5L)', 'Highest maternity/infertility limits before Diamond/Platinum'],
       notCovered: ['Parents are not covered under the enhanced sum insured'],
-      notes: ['Emp Face Rate ₹16,500 / family / year, excl. GST.'],
+      notes: ['₹19,470 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_silver_a',
-    name: 'Silver A',
-    desc: 'Same maternity boost as Bronze A, but the enhanced cover extends to parents too.',
+    name: 'Base 5L + Silver 3L',
+    desc: 'Same maternity boost as Base 5L + Bronze 3L, but the enhanced cover extends to parents too.',
     coverNote: 'Enhanced Sum Insured covers the same family members as your Base plan, including parents.',
-    sums: [{ si: 600000, prem: 16900, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹3L', emi: null }],
+    sums: [{ si: 800000, prem: 19942, note: 'Paid upgrade, GST inclusive — Base 5L + ₹3L', emi: null }],
     features: [
       { label: 'Maternity — Normal Delivery', value: 'INR 75,000' },
       { label: 'Maternity — C-Section', value: 'INR 1,00,000' },
@@ -107,17 +109,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Not applicable on the enhanced sum insured' },
     ],
     detail: {
-      covered: ['Total SI ₹6L (on minimum grade band)', 'Parents included in the enhanced cover, with co-pay waived on that portion'],
+      covered: ['Total SI ₹8L (Base 5L + ₹3L)', 'Parents included in the enhanced cover, with co-pay waived on that portion'],
       notCovered: [],
-      notes: ['Emp Face Rate ₹16,900 / family / year, excl. GST.'],
+      notes: ['₹19,942 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_silver_b',
-    name: 'Silver B',
-    desc: 'Same maternity boost as Bronze B, but the enhanced cover extends to parents too.',
+    name: 'Base 5L + Silver 5L',
+    desc: 'Same maternity boost as Base 5L + Bronze 5L, but the enhanced cover extends to parents too.',
     coverNote: 'Enhanced Sum Insured covers the same family members as your Base plan, including parents.',
-    sums: [{ si: 800000, prem: 19600, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹5L', emi: null }],
+    sums: [{ si: 1000000, prem: 23128, note: 'Paid upgrade, GST inclusive — Base 5L + ₹5L', emi: null }],
     features: [
       { label: 'Maternity — Normal Delivery', value: 'INR 1,00,000' },
       { label: 'Maternity — C-Section', value: 'INR 1,25,000' },
@@ -128,17 +130,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Not applicable on the enhanced sum insured' },
     ],
     detail: {
-      covered: ['Total SI ₹8L (on minimum grade band)', 'Parents included in the enhanced cover, with co-pay waived on that portion'],
+      covered: ['Total SI ₹10L (Base 5L + ₹5L)', 'Parents included in the enhanced cover, with co-pay waived on that portion'],
       notCovered: [],
-      notes: ['Emp Face Rate ₹19,600 / family / year, excl. GST.'],
+      notes: ['₹23,128 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_gold_a',
-    name: 'Gold A',
+    name: 'Base 5L + Gold 3L',
     desc: 'Parents-focused upgrade — boosts your Base cover by ₹3L with a much higher cataract limit.',
     coverNote: 'Enhanced Sum Insured covers the same family members as your Base plan, including parents.',
-    sums: [{ si: 600000, prem: 21600, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹3L', emi: null }],
+    sums: [{ si: 800000, prem: 25488, note: 'Paid upgrade, GST inclusive — Base 5L + ₹3L', emi: null }],
     features: [
       { label: 'Cataract Limit', value: 'INR 50,000 per eye' },
       { label: 'Maternity / Infertility', value: 'Same as Base Plan (this tier focuses on cataract, not maternity)' },
@@ -146,17 +148,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Not applicable on the enhanced sum insured' },
     ],
     detail: {
-      covered: ['Total SI ₹6L (on minimum grade band)', 'Cataract limit raised to INR 50,000 per eye'],
+      covered: ['Total SI ₹8L (Base 5L + ₹3L)', 'Cataract limit raised to INR 50,000 per eye'],
       notCovered: [],
-      notes: ['Emp Face Rate ₹21,600 / family / year, excl. GST.'],
+      notes: ['₹25,488 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_gold_b',
-    name: 'Gold B',
+    name: 'Base 5L + Gold 5L',
     desc: 'Parents-focused upgrade — boosts your Base cover by ₹5L with the highest cataract limit before Diamond/Platinum.',
     coverNote: 'Enhanced Sum Insured covers the same family members as your Base plan, including parents.',
-    sums: [{ si: 800000, prem: 23400, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹5L', emi: null }],
+    sums: [{ si: 1000000, prem: 27612, note: 'Paid upgrade, GST inclusive — Base 5L + ₹5L', emi: null }],
     features: [
       { label: 'Cataract Limit', value: 'INR 75,000 per eye' },
       { label: 'Maternity / Infertility', value: 'Same as Base Plan (this tier focuses on cataract, not maternity)' },
@@ -164,17 +166,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Not applicable on the enhanced sum insured' },
     ],
     detail: {
-      covered: ['Total SI ₹8L (on minimum grade band)', 'Cataract limit raised to INR 75,000 per eye'],
+      covered: ['Total SI ₹10L (Base 5L + ₹5L)', 'Cataract limit raised to INR 75,000 per eye'],
       notCovered: [],
-      notes: ['Emp Face Rate ₹23,400 / family / year, excl. GST.'],
+      notes: ['₹27,612 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_diamond',
-    name: 'Diamond',
+    name: 'Base 5L + Diamond 10L',
     desc: 'Combines the best of both worlds — a ₹10L boost with top-tier maternity limits and a much higher cataract cap.',
     coverNote: 'Enhanced Sum Insured covers the same family members as your Base plan, including parents.',
-    sums: [{ si: 1300000, prem: 26400, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹10L', emi: null }],
+    sums: [{ si: 1500000, prem: 31152, note: 'Paid upgrade, GST inclusive — Base 5L + ₹10L', emi: null }],
     features: [
       { label: 'Maternity — Normal Delivery', value: 'INR 1,00,000' },
       { label: 'Maternity — C-Section', value: 'INR 1,25,000' },
@@ -185,17 +187,17 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Not applicable on the enhanced sum insured' },
     ],
     detail: {
-      covered: ['Total SI ₹13L (on minimum grade band)', 'Top-tier maternity, infertility and cataract limits'],
+      covered: ['Total SI ₹15L (Base 5L + ₹10L)', 'Top-tier maternity, infertility and cataract limits'],
       notCovered: [],
-      notes: ['Emp Face Rate ₹26,400 / family / year, excl. GST.'],
+      notes: ['₹31,152 / family / year, GST inclusive.'],
     },
   },
   {
     id: 'gmc_platinum',
-    name: 'Platinum',
+    name: 'Base 5L + Platinum 15L',
     desc: 'The highest tier — a ₹15L boost with the richest maternity cover and cataract limit available.',
     coverNote: 'Enhanced Sum Insured covers the same family members as your Base plan, including parents.',
-    sums: [{ si: 1800000, prem: 30360, note: 'Paid upgrade (excl. GST) — Base (min ₹3L) + ₹15L', emi: null }],
+    sums: [{ si: 2000000, prem: 35824.8, note: 'Paid upgrade, GST inclusive — Base 5L + ₹15L', emi: null }],
     features: [
       { label: 'Maternity — Normal Delivery', value: 'INR 1,25,000' },
       { label: 'Maternity — C-Section', value: 'INR 1,50,000' },
@@ -206,9 +208,9 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
       { label: 'Parental Co-pay', value: 'Not applicable on the enhanced sum insured' },
     ],
     detail: {
-      covered: ['Total SI ₹18L (on minimum grade band)', 'Richest maternity cover and cataract limit in the plan line-up'],
+      covered: ['Total SI ₹20L (Base 5L + ₹15L)', 'Richest maternity cover and cataract limit in the plan line-up'],
       notCovered: [],
-      notes: ['Emp Face Rate ₹30,360 / family / year, excl. GST.'],
+      notes: ['₹35,824.80 / family / year, GST inclusive.'],
     },
   },
 ];
@@ -216,23 +218,20 @@ const expleoGmcPlans: CompanyProfile['gmcPlans'] = [
 // OPD — the CompanyProfile schema has no dedicated "OPD chooser" field/level,
 // so (following the precedent already set by Tarento's `opd_wallet` addon)
 // Expleo's 3 OPD wallet tiers are modeled as Wellbeing Bazaar add-on cards.
-// Source: "Expleo GMC & OPD Plan.xlsx", sheet "OPD". Fully employee-paid — no
-// company contribution, per the source sheet.
-//
-// No card art was supplied for these ids, and they aren't in the built-in
-// pixel-icon fallback whitelist (only `opd_wallet` is recognized) — they'll
-// render a plain circle in the Wellbeing Bazaar until real art is dropped at
-// public/branding/addons/opd_10k.png / opd_15k.png / opd_20k.png.
+// Source: "Expleo GMC & OPD.xlsx" (updated), sheet "OPD". Fully employee-paid
+// — no company contribution, per the source sheet. Prices are the sheet's
+// GST-inclusive "Premium" row (the earlier excl.-GST figures × 1.18).
 const expleoAddons: CompanyProfile['addons'] = [
   {
     id: 'opd_10k',
     name: 'OPD Wallet — INR 10,000',
     per: 'family',
-    price: 4200,
+    price: 4956,
     desc: 'Outpatient wallet covering consultations, dental, vision, pharmacy, diagnostics, annual health check-up and vaccination — fully employee-paid.',
     elig: () => true,
     eligNote: 'Covers Employee, Spouse & Children (ESC)',
     brand: 'OPD Wallet',
+    imageUrl: assetPath('branding/addons/expleo_opd.jpg'),
     features: [
       { label: 'Teleconsultation / In-clinic Doctor', value: 'Up to INR 8,000 (teleconsultation is cashless only)' },
       { label: 'Dental', value: 'Up to INR 3,000' },
@@ -248,11 +247,12 @@ const expleoAddons: CompanyProfile['addons'] = [
     id: 'opd_15k',
     name: 'OPD Wallet — INR 15,000',
     per: 'family',
-    price: 6200,
+    price: 7316,
     desc: 'Outpatient wallet covering consultations, dental, vision, pharmacy, diagnostics, annual health check-up and vaccination — fully employee-paid.',
     elig: () => true,
     eligNote: 'Covers Employee, Spouse & Children (ESC)',
     brand: 'OPD Wallet',
+    imageUrl: assetPath('branding/addons/expleo_opd.jpg'),
     features: [
       { label: 'Teleconsultation / In-clinic Doctor', value: 'Up to INR 12,000 (teleconsultation is cashless only)' },
       { label: 'Dental', value: 'Up to INR 4,500' },
@@ -268,11 +268,12 @@ const expleoAddons: CompanyProfile['addons'] = [
     id: 'opd_20k',
     name: 'OPD Wallet — INR 20,000',
     per: 'family',
-    price: 8900,
+    price: 10502,
     desc: 'Outpatient wallet covering consultations, dental, vision, pharmacy, diagnostics, annual health check-up and vaccination — fully employee-paid.',
     elig: () => true,
     eligNote: 'Covers Employee, Spouse & Children (ESC)',
     brand: 'OPD Wallet',
+    imageUrl: assetPath('branding/addons/expleo_opd.jpg'),
     features: [
       { label: 'Teleconsultation / In-clinic Doctor', value: 'Up to INR 16,000 (teleconsultation is cashless only)' },
       { label: 'Dental', value: 'Up to INR 6,000' },
