@@ -198,13 +198,10 @@ export const symphonyaiProfile: CompanyProfile = {
   titleSuffix: 'SymphonyAI',
   COMPANY: 'SymphonyAI',
   TAGLINE: 'Benefits Adventure',
-  // TODO(symphonyai): no logo/wordmark assets were supplied — these paths
-  // point at public/branding/symphonyai/, which still needs logo.png,
-  // logo.svg and a SymphonyAI wordmark dropped in (see
-  // docs/client-onboarding.md Step 2). loophealth.png and the enrolment QR
-  // have already been generated into that folder.
+  // Only one logo asset was supplied (a PNG, no SVG) — fallback points at
+  // the same file, same as Expleo's profile.
   LOGO_URL: assetPath('branding/symphonyai/logo.png'),
-  LOGO_FALLBACK_URL: assetPath('branding/symphonyai/logo.svg'),
+  LOGO_FALLBACK_URL: assetPath('branding/symphonyai/logo.png'),
   partners: [
     { name: 'SymphonyAI', logoUrl: assetPath('branding/symphonyai/symphonyai.png') },
     { name: 'Loophealth', logoUrl: assetPath('branding/symphonyai/loophealth.png') },
