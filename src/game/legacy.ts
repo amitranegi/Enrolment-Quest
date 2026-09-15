@@ -5155,6 +5155,7 @@ let famTimer=null;
 let courtBgImg=null; // cached Home Secured mood plate
 let summarySaveInFlight=false;
 let summarySaveDone=false;
+let summarySavePromise=null;
 
 function loadCourtBg(){
   return new Promise(res=>{
@@ -5260,6 +5261,7 @@ function showSummary(){
   startCourtyardScene(mem);
   summarySaveInFlight=false;
   summarySaveDone=false;
+  summarySavePromise=null;
   submitPlay({ auto:true, noSuccessModal:true, uiFeedback:false });
 }
 
@@ -5447,10 +5449,20 @@ function drawCourtMini(x,cx,gy,skin,m,s,gesturing){
 
 async function submitPlay(opts={}){
   const { auto=false, noSuccessModal=true, uiFeedback=true } = opts;
-  if(summarySaveInFlight) return;
   if(summarySaveDone){
     if(!noSuccessModal){
       enterCheckoutSuccess();
+    }
+    return;
+  }
+  if(summarySaveInFlight){
+    // The silent auto-save fired by showSummary() may still be in flight —
+    // wait for it instead of dropping this call, so a "Finish game" click
+    // during that window still opens the success modal (and its "Back to
+    // title" button) once the save resolves, rather than doing nothing.
+    if(summarySavePromise) await summarySavePromise;
+    if(summarySaveDone && !noSuccessModal){
+      setTimeout(enterCheckoutSuccess, 550);
     }
     return;
   }
@@ -5470,40 +5482,42 @@ async function submitPlay(opts={}){
     coins:G.coinsGot, stomps:G.stomps, deaths:G.deaths,
     durationSec:Math.round(G.timeSpent),
   };
-  try{
-    if(CONFIG.MODE==='live'){ await submitEnrolmentToAPI(payload); }
-    const result = await persistInterestPlay(payload);
-    if(!result.ok){
+  summarySavePromise = (async()=>{
+    try{
+      if(CONFIG.MODE==='live'){ await submitEnrolmentToAPI(payload); }
+      const result = await persistInterestPlay(payload);
+      if(!result.ok){
+        if(!auto && uiFeedback){
+          if(btn){ btn.disabled=false; btn.textContent='Retry'; }
+          const note=document.getElementById('submitNote');
+          if(note) note.innerHTML='<span class="no">'+result.message+'</span>';
+        }
+        return;
+      }
+      summarySaveDone=true;
+      if(!auto && uiFeedback && btn){
+        btn.disabled=false;
+        btn.textContent = 'Done!';
+      }
+      if(!auto && uiFeedback){
+        const note=document.getElementById('submitNote');
+        if(note){
+          note.innerHTML='<span class="ok">'+(result.skipped?'Interest noted — next up, the portal.':'Saved — next up, the portal.')+'</span>';
+        }
+      }
+    }catch(e){
       if(!auto && uiFeedback){
         if(btn){ btn.disabled=false; btn.textContent='Retry'; }
         const note=document.getElementById('submitNote');
-        if(note) note.innerHTML='<span class="no">'+result.message+'</span>';
+        if(note) note.innerHTML='<span class="no">Save failed — try again.</span>';
       }
+    }finally{
       summarySaveInFlight=false;
-      return;
     }
-    summarySaveDone=true;
-    summarySaveInFlight=false;
-    if(!auto && uiFeedback && btn){
-      btn.disabled=false;
-      btn.textContent = 'Done!';
-    }
-    if(!auto && uiFeedback){
-      const note=document.getElementById('submitNote');
-      if(note){
-        note.innerHTML='<span class="ok">'+(result.skipped?'Interest noted — next up, the portal.':'Saved — next up, the portal.')+'</span>';
-      }
-    }
-    if(!noSuccessModal && !auto){
-      setTimeout(enterCheckoutSuccess, 550);
-    }
-  }catch(e){
-    summarySaveInFlight=false;
-    if(!auto && uiFeedback){
-      if(btn){ btn.disabled=false; btn.textContent='Retry'; }
-      const note=document.getElementById('submitNote');
-      if(note) note.innerHTML='<span class="no">Save failed — try again.</span>';
-    }
+  })();
+  await summarySavePromise;
+  if(!noSuccessModal && summarySaveDone){
+    setTimeout(enterCheckoutSuccess, 550);
   }
 }
 
