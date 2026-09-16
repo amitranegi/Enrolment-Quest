@@ -15,6 +15,7 @@ const companyTable: Record<string, string> = {
   livspace: "plays_livspace",
   expleo: "plays_expleo",
   symphonyai: "plays_symphonyai",
+  tataaia: "plays_tataaia",
 };
 
 Deno.serve(async (req) => {
