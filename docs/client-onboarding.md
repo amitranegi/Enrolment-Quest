@@ -4,7 +4,58 @@ How to add a new client company to Enrolment Quest. This supersedes
 `public/branding/README.md` / `public/branding/addons/README.md` for accuracy
 (those two files are stale and are not updated by this doc).
 
-## 1. Overview
+## 0. Spreadsheet (recommended for most clients)
+
+A non-technical person can fill in a spreadsheet instead of writing any
+code. The actual publish step still goes through a normal PR — nothing goes
+live without someone reviewing the generated diff first.
+
+1. Open `onboarding/companies.xlsx`. The `Instructions` tab explains each
+   column; every tab has an "Example Co" row (real Tarento numbers) showing
+   what a filled row looks like — copy its shape, not its values.
+2. Add one row per new company to the `Company` tab (leave `status` blank).
+   Add at least one row to `GMC Plans` with a matching `company_id`.
+   `Super Top-Up`, `Term Life` and `Addons` tabs are optional — leave them
+   empty if a company doesn't have that benefit (no `Addons` rows means it
+   uses the standard Wellbeing Bazaar catalogue, same as almost every
+   client so far).
+3. Drop the company's logo at `onboarding/incoming/<company_id>/<filename>`
+   — the filename must match what you wrote in the `logo_filename` column.
+4. Run: `python3 scripts/import_companies.py`
+
+   For each pending row, this generates exactly what a developer would
+   otherwise hand-write: `src/config/companies/<id>.ts`, the branding
+   folder (logo + the shared Loop Health mark + a generated enrolment QR),
+   an entry in `src/config/companies/index.ts`, an entry in
+   `supabase/functions/export-plays/index.ts`'s company map, and a new
+   Supabase migration from `supabase/MIGRATION_TEMPLATE.sql.txt`. It marks
+   the row `imported`, or writes a specific `error: ...` message into
+   `status` and moves on — one bad row never blocks the others, and
+   re-running the script is safe (already-`imported` rows are skipped).
+5. Commit everything (including the updated `companies.xlsx`) and open a
+   PR as usual. A reviewer can read the generated `.ts` file like any other
+   diff before it merges.
+6. After merging: apply the new migration and redeploy `export-plays` —
+   same two manual steps every company has always needed (see Steps 3-4
+   below); nothing about the spreadsheet changes that part.
+
+Regenerate a blank template any time with
+`python3 scripts/build_onboarding_template.py` (this rebuilds the workbook
+from scratch — don't run it against one that already has real company rows
+in it).
+
+**Current limitations** — reach for the manual path below instead when a
+client needs something the generator doesn't produce: rich
+`detail.covered/notCovered/notes` narrative text on a plan (this field is
+dead code today regardless — nothing in the game renders it), more than 4
+feature bullets per plan (only the first 2 are ever shown in-game anyway —
+`legacy.ts`'s `openGmcFocusZone`), a `MODE:'live'` real-enrolment
+integration, or any plan structure that doesn't fit "a flat list of
+sum-insured/premium tiers" (e.g. TATA AIA's sum-insured × parent-count
+matrix needed a human judgment call about which axis to flatten — the
+generator can't make that call for you).
+
+## 1. Overview (manual / advanced path)
 
 Every client-specific thing in the game — branding, plan/premium data, the
 add-on catalogue, dependant limits, and which Supabase table/RPC gameplay data

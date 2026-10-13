@@ -19,6 +19,13 @@ supabase/.temp/
 assets/sprites/_wip/
 assets/sprites/export/
 
+# Company onboarding — staged logo uploads for scripts/import_companies.py.
+# Transient input only; the script copies what it needs into
+# public/branding/<id>/, which IS committed. Don't commit the staging copy.
+onboarding/incoming/
+# Excel/LibreOffice lock files, created while companies.xlsx is open.
+onboarding/~$*.xlsx
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
