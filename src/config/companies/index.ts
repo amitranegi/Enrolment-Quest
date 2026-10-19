@@ -1,6 +1,7 @@
 import { demoProfile } from './demo';
 import { expleoProfile } from './expleo';
 import { livspaceProfile } from './livspace';
+import { ncsiProfile } from './ncsi';
 import { partnerProfile } from './partner';
 import { symphonyaiProfile } from './symphonyai';
 import { symplrProfile } from './symplr';
@@ -17,6 +18,7 @@ export const companyProfiles: CompanyProfile[] = [
   symphonyaiProfile,
   tataaiaProfile,
   symplrProfile,
+  ncsiProfile,
 ];
 
 const companyById = new Map(companyProfiles.map((profile) => [profile.id, profile] as const));
