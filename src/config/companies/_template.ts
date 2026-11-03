@@ -119,6 +119,9 @@ export const newClientProfile: CompanyProfile = {
     },
   ],
 
+  // No Super Top-Up product unless the client policy explicitly includes one.
+  superTopUpPlans: [],
+
   // Level 4 — Group Term Life options. Always author this explicitly, even if
   // enableLevel4 stays false for now — don't leave it empty/undefined.
   gtlPlans: [

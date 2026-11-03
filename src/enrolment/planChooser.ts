@@ -1,7 +1,7 @@
 import type { ChooserPlan, PlanChooserConfig } from './planChooserTypes';
 import { showChoiceNudge, closeChoiceNudge } from './choiceNudge';
 
-export type { ChooserPlan, PlanChooserConfig, PlanFeature } from './planChooserTypes';
+export type { ChooserPlan, PlanChooserConfig, PlanFeature, PlanDetail } from './planChooserTypes';
 
 let open = false;
 let root: HTMLDivElement | null = null;
@@ -9,6 +9,7 @@ let cfg: PlanChooserConfig | null = null;
 let selectedId: string | null = null;
 let multiIds = new Set<string>();
 let nudgeAck = false;
+let detailId: string | null = null;
 
 export function isPlanChooserOpen(): boolean {
   return open;
@@ -42,6 +43,7 @@ export function closePlanChooser(): void {
   selectedId = null;
   multiIds = new Set();
   nudgeAck = false;
+  detailId = null;
   closeChoiceNudge();
   if (root) {
     root.className = '';
@@ -106,6 +108,7 @@ function cardHtml(p: ChooserPlan): string {
       <h2>${esc(p.name)}</h2>
       <span class="pc-radio" aria-hidden="true"></span>
     </header>
+    ${p.tagline ? `<p class="pc-tagline">${esc(p.tagline)}</p>` : ''}
     ${p.sumLabel ? `<div class="pc-sum">${esc(p.sumLabel)}</div>` : ''}
     ${p.coverNote ? `<p class="pc-cover">${esc(p.coverNote)}</p>` : ''}
     ${p.priceLabel
@@ -116,8 +119,56 @@ function cardHtml(p: ChooserPlan): string {
     </div>`
       : ''}
     ${highlights}
+    ${p.detail ? `<button type="button" class="pc-details-btn" data-details="${esc(p.id)}">View policy details ›</button>` : ''}
     <button type="button" class="pxbtn ${isOn(p.id) ? 'good' : ''}" data-pick="${esc(p.id)}">${pickLabel}</button>
   </article>`;
+}
+
+function detailList(title: string, values?: string[]): string {
+  if (!values?.length) return '';
+  return `<section class="pc-detail-section">
+    <h3>${esc(title)}</h3>
+    <ul>${values.map((value) => `<li>${esc(value)}</li>`).join('')}</ul>
+  </section>`;
+}
+
+function detailHtml(): string {
+  if (!cfg || !detailId) return '';
+  const plan = cfg.plans.find((item) => item.id === detailId);
+  if (!plan?.detail) return '';
+  const detail = plan.detail;
+  return `<div class="pc-detail-scrim" data-detail-close></div>
+    <aside class="pc-detail-sheet" role="dialog" aria-label="${esc(plan.name)} details">
+      <header class="pc-detail-top">
+        <div><span class="pc-detail-kicker">Policy details</span><h2>${esc(plan.name)}</h2></div>
+        <button type="button" class="pxbtn" data-detail-close>Close</button>
+      </header>
+      <div class="pc-detail-body">
+        ${plan.tagline ? `<p class="pc-detail-desc">${esc(plan.tagline)}</p>` : ''}
+        ${detailList('What is covered', detail.covered)}
+        ${detailList('Coverage limits and notes', detail.notes)}
+        ${detailList('Not included', detail.notCovered)}
+        ${detail.policyUrl ? `<a class="pc-policy-link" href="${esc(detail.policyUrl)}" target="_blank" rel="noopener noreferrer">Open full policy PDF ↗</a>` : ''}
+      </div>
+    </aside>`;
+}
+
+function showDetails(id: string): void {
+  detailId = id;
+  const layer = root?.querySelector('.pc-detail-layer');
+  if (!layer) return;
+  layer.innerHTML = detailHtml();
+  bindDetails(layer);
+}
+
+function bindDetails(host: Element): void {
+  host.querySelectorAll('[data-detail-close]').forEach((node) => {
+    node.addEventListener('click', () => {
+      detailId = null;
+      const layer = root?.querySelector('.pc-detail-layer');
+      if (layer) layer.innerHTML = '';
+    });
+  });
 }
 
 function dockHtml(): string {
@@ -168,6 +219,7 @@ function render(): void {
         <button type="button" class="pc-nav pc-nav-r" data-nav="1" aria-label="Scroll right">›</button>
       </div>
       <footer class="pc-dock">${dockHtml()}</footer>
+      <div class="pc-detail-layer">${detailHtml()}</div>
     </div>`;
 
   paintBg();
@@ -257,6 +309,13 @@ function bindDock(dock: HTMLElement): void {
 }
 
 function bind(el: HTMLDivElement): void {
+  el.querySelectorAll('[data-details]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = (btn as HTMLElement).dataset.details;
+      if (id) showDetails(id);
+    });
+  });
   el.querySelectorAll('[data-pick]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -297,6 +356,7 @@ export function openPlanChooser(config: PlanChooserConfig): void {
   open = true;
   cfg = config;
   nudgeAck = false;
+  detailId = null;
   if (config.multiSelect) {
     multiIds = new Set(config.initialSelectedIds || []);
     selectedId = null;

@@ -10,6 +10,7 @@ const cors = {
 
 const companyTable: Record<string, string> = {
   tarento: "plays_tarento",
+  arcelormittal: "plays_arcelormittal",
   demo: "plays_demo",
   partner: "plays_partner",
   livspace: "plays_livspace",

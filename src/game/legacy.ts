@@ -3967,10 +3967,12 @@ function openGmcFocusZone(filterSi, opts={}){
       plans.push({
         id,
         name: p.name,
+        tagline: p.desc,
         coverNote: p.coverNote || familyLine,
-        sumLabel: fmtINR(t.si)+' sum insured',
+        sumLabel: t.siLabel || (t.si == null ? 'Grade-based sum insured' : fmtINR(t.si)+' sum insured'),
         priceLabel: t.prem===0 ? '₹ 0 / family / year' : fmtINR(t.prem)+' / family / year',
         priceSub: t.emi ? ('or 3 salary EMIs · '+fmtINR(t.emi)+'/mo') : undefined,
+        detail: p.detail,
         badge: undefined,
         badgeTone: undefined,
         highlights: (p.features||[]).slice(0,2).map(f=>f.label+': '+f.value),
@@ -4029,7 +4031,7 @@ function openGmcFocusZone(filterSi, opts={}){
     onConfirm: (planId)=>{
       const row = plans.find(p=>p.id===planId);
       if(!row) return;
-      Enrol.gmc={ planId:row._planId, planName:row._planName, si:row._si, prem:row._prem };
+      Enrol.gmc={ planId:row._planId, planName:row._planName, si:row._si, siLabel:row.sumLabel, prem:row._prem };
       G.done.gmc=true; updateHUD();
       Sprites.rebuildHero();
       G.paused=false;
@@ -5190,7 +5192,7 @@ function showSummary(){
 
   const heroMeta=[ch.gender, ch.age?ch.age+' yrs':null, ch.marital].filter(Boolean).join(' · ');
   const gmcLine = Enrol.gmc
-    ? (Enrol.gmc.planName||'Plan')+' · '+siShort(Enrol.gmc.si)
+    ? (Enrol.gmc.planName||'Plan')+' · '+(Enrol.gmc.siLabel || siShort(Enrol.gmc.si))
     : null;
   body.innerHTML =
     '<div class="coScroll">'+
@@ -5692,7 +5694,7 @@ async function refreshData(){
       '<td>'+(p.playerName||'—')+'</td><td>'+(p.department||'—')+'</td>'+
       '<td>'+(p.character?.name||'—')+'</td>'+
       '<td>'+(Array.isArray(p.coveredNames)&&p.coveredNames.length?p.coveredNames.join(', '):(p.coveredCount!=null?String(p.coveredCount)+' covered':'—'))+'</td>'+
-      '<td>'+(p.gmc?p.gmc.planName+'<br><span class="muted">'+fmtINR(p.gmc.si)+'</span>':'—')+'</td>'+
+      '<td>'+(p.gmc?p.gmc.planName+'<br><span class="muted">'+(p.gmc.siLabel||fmtINR(p.gmc.si))+'</span>':'—')+'</td>'+
       '<td>'+((p.addons||[]).map(a=>a.name).join(', ')||'—')+'</td>'+
       '<td>'+(p.gtl?p.gtl.name:'—')+'</td>'+
       '<td>'+fmtINR(p.totalPremium)+'</td><td>'+p.score+' ('+p.grade+')</td></tr>';

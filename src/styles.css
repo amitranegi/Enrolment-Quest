@@ -1635,6 +1635,7 @@ table.data tr:nth-child(even) td{background:rgba(110,69,32,.45);}
 #planZone .pc-sum{
   font-family:var(--font-display); font-size:15px; color:#1a5a40; letter-spacing:.5px;
 }
+#planZone .pc-tagline{margin:0; font-size:12px; line-height:1.35; color:#3d2210;}
 #planZone .pc-cover{margin:0; font-size:11px; color:#5a3a18; font-weight:600; line-height:1.3;}
 #planZone .pc-price{
   display:flex; flex-direction:column; gap:1px;
@@ -1653,6 +1654,10 @@ table.data tr:nth-child(even) td{background:rgba(110,69,32,.45);}
 #planZone .pc-highlights li::before{
   content:'★'; position:absolute; left:0; color:#c87818; font-size:10px;
 }
+#planZone .pc-details-btn{
+  align-self:flex-start; padding:2px 0; border:0; background:transparent;
+  color:#145a90; font-size:12px; font-weight:800; text-decoration:underline; cursor:pointer;
+}
 #planZone .pc-card .pxbtn{width:100%; margin-top:auto; padding-top:8px; padding-bottom:8px; font-size:13px;}
 
 #planZone .pc-dock{
@@ -1670,6 +1675,31 @@ table.data tr:nth-child(even) td{background:rgba(110,69,32,.45);}
 }
 #planZone .pc-summary b{color:var(--gold);}
 #planZone .pc-dock-acts{display:flex; gap:8px; flex-wrap:wrap;}
+#planZone .pc-detail-layer{position:absolute; inset:0; z-index:5; pointer-events:none;}
+#planZone .pc-detail-layer:has(.pc-detail-sheet){pointer-events:auto;}
+#planZone .pc-detail-scrim{position:absolute; inset:0; background:rgba(20,10,4,.45);}
+#planZone .pc-detail-sheet{
+  position:absolute; right:12px; top:12px; bottom:12px; width:min(390px, 90vw);
+  display:flex; flex-direction:column; background:#fff8f0; color:#2a1408;
+  border:3px solid var(--line); border-radius:12px;
+  box-shadow:inset 0 0 0 2px var(--line-hi), 6px 6px 0 var(--shadow); overflow:hidden;
+}
+#planZone .pc-detail-top{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  padding:12px 14px; background:rgba(255,248,232,.9); border-bottom:2px solid var(--line);
+}
+#planZone .pc-detail-top h2{margin:2px 0 0; font-size:16px; font-family:var(--font-display); font-weight:400;}
+#planZone .pc-detail-kicker{font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#6e4520;}
+#planZone .pc-detail-body{flex:1 1 auto; overflow:auto; padding:12px 14px; display:flex; flex-direction:column; gap:12px;}
+#planZone .pc-detail-desc{margin:0; font-size:13px; line-height:1.45; color:#3d2210;}
+#planZone .pc-detail-section h3{margin:0 0 5px; font-size:13px; color:#145a40;}
+#planZone .pc-detail-section ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px;}
+#planZone .pc-detail-section li{font-size:12px; line-height:1.4; color:#3d2210; padding-left:14px; position:relative;}
+#planZone .pc-detail-section li::before{content:'•'; position:absolute; left:0; color:#1e8f8e; font-weight:800;}
+#planZone .pc-policy-link{font-size:13px; font-weight:800; color:#145a90;}
+@media (max-width:700px){
+  #planZone .pc-detail-sheet{left:12px; right:12px; width:auto;}
+}
 
 /* ---------- Focus Zone "make a choice" prompt (sits above every zone) ---------- */
 .cnudge{position:absolute; inset:0; z-index:60; display:flex;

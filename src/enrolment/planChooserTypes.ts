@@ -1,5 +1,12 @@
 export type PlanFeature = { label: string; value: string };
 
+export type PlanDetail = {
+  covered?: string[];
+  notCovered?: string[];
+  notes?: string[];
+  policyUrl?: string;
+};
+
 export type ChooserPlan = {
   id: string;
   name: string;
@@ -23,6 +30,8 @@ export type ChooserPlan = {
   features?: PlanFeature[];
   /** Simple bullet list (term life / add-ons) */
   bullets?: string[];
+  /** Optional policy details shown in a side panel. */
+  detail?: PlanDetail;
   /** Visual tone for card chrome */
   tone?: 'base' | 'gold' | 'diamond' | 'teal' | 'default';
 };
