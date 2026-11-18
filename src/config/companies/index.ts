@@ -1,5 +1,6 @@
 import { demoProfile } from './demo';
 import { arcelorMittalProfile } from './arcelormittal';
+import { fareyeProfile } from './fareye';
 import { expleoProfile } from './expleo';
 import { livspaceProfile } from './livspace';
 import { ncsiProfile } from './ncsi';
@@ -13,6 +14,7 @@ import type { CompanyProfile } from './types';
 export const companyProfiles: CompanyProfile[] = [
   tarentoProfile,
   arcelorMittalProfile,
+  fareyeProfile,
   demoProfile,
   partnerProfile,
   livspaceProfile,
